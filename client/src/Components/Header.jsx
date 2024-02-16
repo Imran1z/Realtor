@@ -22,7 +22,7 @@ const Header = () => {
 
         <ul className='flex gap-4 '>
             <Link to={'/'} className='hidden sm:inline text-slate-700 hover:underline cursor-pointer'>Home</Link>
-            <Link to={'/about'} className='text-slate-700 hover:underline cursor-pointer'>About</Link>
+            <Link to={'/about'} className='text-slate-700 hidden sm:inline hover:underline cursor-pointer'>About</Link>
             <Link to={'/signin'} className='text-slate-700 hover:underline cursor-pointer'>Sign in</Link>
         </ul>
         
