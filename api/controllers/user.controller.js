@@ -1,4 +1,5 @@
 import User from "../models/user.model.js";
+import bcryptjs from 'bcryptjs'
 
 
 export const updateUser = async(req,res,next)=>{
