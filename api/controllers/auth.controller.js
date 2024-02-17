@@ -1,7 +1,7 @@
 import User from '../models/user.model.js'
 import bcryptjs from 'bcryptjs'
 
-export const signup =async(req, res)=>{
+export const signup =async(req, res,next)=>{
      const {username,email,password}=req.body;
     try {
         const hashedPassword=bcryptjs.hashSync(password,12);
@@ -9,12 +9,13 @@ export const signup =async(req, res)=>{
         await newUser.save();
    
         const {password:hashed,...user}=newUser._doc;
-        //for removing the password without spreading it not optimized as taknig another call to the database
+
+        //for removing the password without spreading it is not optimized as taking another call to the database
        //  const user =await User.find({_id:newUser._id}).select("-password")
+
        res.status(200).json(user)
     } catch (error) {
-        res.status(500).json(error.message)
-        
+        next(error)        
     }
 
 }
