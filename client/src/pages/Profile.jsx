@@ -1,4 +1,4 @@
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useRef, useState, useEffect } from 'react';
 import {
   getDownloadURL,
@@ -8,12 +8,16 @@ import {
 } from 'firebase/storage';
 import { Link } from 'react-router-dom';
 import {app} from '../firebase.js'
+import { updateUserStart,updateUserSuccess,updateUserFailure } from '../redux/user/userSlice.js';
+
 
 const Profile = () => {
   const {currentUser,loading,error}= useSelector((state)=>state.user)
   const [formData, setFormData] = useState({});
   const [file,setFile]=useState(undefined)
   const [filePerc, setFilePerc] = useState(0);
+  const [updateSuccess, setUpdateSuccess] = useState(false)
+  const dispatch =useDispatch();
   const [fileUploadError, setFileUploadError] = useState(false);
   const fileRef =useRef(null);
 
@@ -56,6 +60,12 @@ const Profile = () => {
 
 
 
+
+
+
+
+
+
   const handleChange =(e)=>{
     setFormData({...formData , [e.target.id]:e.target.value})
   }
@@ -69,10 +79,35 @@ const Profile = () => {
 
 
 
-  const handleSubmit=(e)=>{
+  const handleSubmit=async(e)=>{
     e.preventDefault();
+    console.log("formdata",formData)
 
-    console.log(formData)
+    try {
+      dispatch(updateUserStart())
+
+      const res =await fetch(`/api/v1/user/update/${currentUser._id}`,{
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      })
+      
+
+      const data = await res.json();
+      console.log("data from api",data);
+      if (data.success === false) {
+        dispatch(updateUserFailure(data.message))
+        return;
+      }
+      dispatch(updateUserSuccess(data))
+      setUpdateSuccess(true)
+
+    } catch (error) {
+      dispatch(updateUserFailure(error.message))
+    }
+
   }
 
 
@@ -150,6 +185,8 @@ const Profile = () => {
           Sign out
         </span>
         </div>
+        <p className='text-red-700 mt-5'>{error ? error : ''}</p>
+        <p className='text-green-600-700 mt-5'>{updateSuccess? "Profile updated successfully" : ''}</p>
 
 
         </form>
