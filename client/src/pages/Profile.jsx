@@ -8,7 +8,7 @@ import {
 } from 'firebase/storage';
 import { Link, useNavigate } from 'react-router-dom';
 import {app} from '../firebase.js'
-import { updateUserStart,updateUserSuccess,updateUserFailure,deleteUserStart,deleteUserSuccess,deleteUserFailure} from '../redux/user/userSlice.js';
+import { updateUserStart,updateUserSuccess,updateUserFailure,deleteUserStart,deleteUserSuccess,deleteUserFailure,signOutUserStart,signOutUserSuccess,signinFailure} from '../redux/user/userSlice.js';
 
 
 const Profile = () => {
@@ -82,11 +82,11 @@ const Profile = () => {
 
   const handleSubmit=async(e)=>{
     e.preventDefault();
-    console.log("formdata",formData)
+  //  console.log("formdata",formData)
 
     try {
       dispatch(updateUserStart())
-      console.log(currentUser._id)
+//console.log(currentUser._id)
       const res =await fetch(`/api/v1/user/update/${currentUser._id}`,{
         method: 'POST',
         headers: {
@@ -97,7 +97,7 @@ const Profile = () => {
       
 
       const data = await res.json();
-      console.log("data from api",data);
+   //   console.log("data from api",data);
       if (data.success === false) {
         dispatch(updateUserFailure(data.message))
         return;
@@ -134,6 +134,23 @@ const Profile = () => {
     }
   }
 
+
+  const handleSignout =async()=>{
+    try {
+      dispatch(signOutUserStart())
+      const res =await fetch('/api/v1/auth/signout')
+
+      const data = await res.json();
+      if (data.success === false) {
+        dispatch(signinFailure(data.message))
+        return;
+      }
+      dispatch(signOutUserSuccess());
+
+    } catch (error) {
+dispatch(signinFailure(error.message))   
+ }
+  }
 
 
 
@@ -206,7 +223,7 @@ const Profile = () => {
         >
           Delete account
         </span>
-        <span  className='text-red-700 cursor-pointer'>
+        <span  className='text-red-700 cursor-pointer' onClick={handleSignout}>
           Sign out
         </span>
         </div>
