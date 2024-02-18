@@ -6,15 +6,16 @@ import {
   ref,
   uploadBytesResumable,
 } from 'firebase/storage';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import {app} from '../firebase.js'
-import { updateUserStart,updateUserSuccess,updateUserFailure } from '../redux/user/userSlice.js';
+import { updateUserStart,updateUserSuccess,updateUserFailure,deleteUserStart,deleteUserSuccess,deleteUserFailure} from '../redux/user/userSlice.js';
 
 
 const Profile = () => {
   const {currentUser,loading,error}= useSelector((state)=>state.user)
   const [formData, setFormData] = useState({});
-  const [file,setFile]=useState(undefined)
+  const [file,setFile]=useState(undefined);
+  //const navigate = useNavigate();
   const [filePerc, setFilePerc] = useState(0);
   const [updateSuccess, setUpdateSuccess] = useState(false)
   const dispatch =useDispatch();
@@ -85,7 +86,7 @@ const Profile = () => {
 
     try {
       dispatch(updateUserStart())
-
+      console.log(currentUser._id)
       const res =await fetch(`/api/v1/user/update/${currentUser._id}`,{
         method: 'POST',
         headers: {
@@ -105,9 +106,32 @@ const Profile = () => {
       setUpdateSuccess(true)
 
     } catch (error) {
+      console.log(error)
       dispatch(updateUserFailure(error.message))
     }
 
+  }
+
+
+  const handleDeleteUser =async()=>{
+    try {
+      dispatch(deleteUserStart());
+
+      const res = await fetch(`/api/v1/user/delete/${currentUser._id}`,{
+       method:"DELETE", 
+      });
+
+      const data = await res.json();
+      if (data.success === false) {
+        dispatch(deleteUserFailure(data.message))
+        return;
+      }
+      dispatch(deleteUserSuccess());
+      
+      
+    } catch (error) {
+      dispatch(deleteUserFailure(error.message))
+    }
   }
 
 
@@ -178,6 +202,7 @@ const Profile = () => {
         <div className='flex justify-between mt-5'>
         <span
           className='text-red-700 cursor-pointer'
+          onClick={handleDeleteUser}
         >
           Delete account
         </span>
@@ -185,8 +210,8 @@ const Profile = () => {
           Sign out
         </span>
         </div>
+        <p className='text-green-600 '>{updateSuccess? "Profile updated successfully" : ''}</p>
         <p className='text-red-700 mt-5'>{error ? error : ''}</p>
-        <p className='text-green-600-700 mt-5'>{updateSuccess? "Profile updated successfully" : ''}</p>
 
 
         </form>
