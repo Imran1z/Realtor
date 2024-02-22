@@ -45,6 +45,8 @@ const CreateListing = () => {
 
     }
 
+
+
  const storeImage=async(file)=>{
     return new Promise((resolve, reject)=>{
         const storage=getStorage(app);
@@ -76,6 +78,12 @@ const CreateListing = () => {
     })
  }
 
+
+    const handleRemoveImage=(index)=>{
+        setFormData({
+            ...formData,imageUrls:formData.imageUrls.filter((_,i)=>i !==index)
+        })
+    }
 
   return (
     <main className='p-3 max-w-4xl mx-auto'>
@@ -159,9 +167,9 @@ const CreateListing = () => {
                 formData.imageUrls.length > 0 && formData.imageUrls.map((url, index) => {
                     // You need to return the JSX element from within map function
                     return (
-                        <div key={index} className='flex justify-between'>
-                        <img src={url} alt="listing image" className='w-30 h-20 object-contain rounded-lg '/>
-                        <button className='text-red-500'>Delete</button>
+                        <div key={index} className='flex justify-between p-3 border shadow-md'>
+                        <img src={url} alt="listing image" className='w-20 h-20 object-contain rounded-lg '/>
+                        <button type='button' onClick={()=>handleRemoveImage(index)} className='text-red-500 p-3 uppercase rounded-lg hover:opacity-75'>Delete</button>
                         </div>
                     );
                 })
