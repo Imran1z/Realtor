@@ -6,6 +6,9 @@ import {
     uploadBytesResumable,
   } from 'firebase/storage';
   import {app} from '../firebase.js'
+import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+  
 
 
 const CreateListing = () => {
@@ -19,7 +22,7 @@ const CreateListing = () => {
         bedrooms:1,
         bathrooms:1,
         regularPrice:100,
-        discountPrice:100,
+        discountPrice:0,
         offer:false,
         parking:false,
         furnished:false,
@@ -27,9 +30,13 @@ const CreateListing = () => {
 
     });
     const [imageUploadError, setImageUploadError] = useState("");
-    const [loadingUploadImage, setloadingUploadImage] = useState(false)
+    const [loadingUploadImage, setloadingUploadImage] = useState(false);
+    const [error, setError] = useState(null);
+    const [loading, setLoading] = useState(false)
+    const {currentUser}= useSelector((state)=>state.user)
+    const navigate =useNavigate()
+
    // console.log(files)
-   console.log(formData);
 
     const handleimageSubmit=()=>{
         setloadingUploadImage(true)
@@ -127,10 +134,56 @@ const CreateListing = () => {
 
     }
 
+    const handleSubmit =async(e)=>{
+        e.preventDefault();
+        console.log(formData);
+        try {
+            
+            if (formData.imageUrls.length==0) {
+                return setError('You must upload at least one image')
+                
+            }
+            if (+formData.regularPrice<+formData.discountPrice) {
+                return setError('Discount price must be lower than Regular price')
+                
+            }
+            
+           setLoading(true); 
+           setError(false);
+
+           const res =await fetch('/api/v1/listing/create',{
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({...formData,
+                    userRef:currentUser._id
+                }),
+          })
+          
+    
+          const data = await res.json();
+          setLoading(false)
+         // console.log("data from api",data);
+          if (data.success === false) {
+            setError(data.message)
+            return;
+          }
+
+          navigate(`/listing/${data._id}`)
+        } catch (error) {
+            setError(error.message)
+            setLoading(false); 
+            
+        }
+
+        
+    }
+
   return (
     <main className='p-3 max-w-4xl mx-auto'>
         <h1 className='text-3xl font-semibold text-center my-7'>Create a Listing</h1>
-        <form className='flex flex-col sm:flex-row gap-4'>
+        <form onSubmit={handleSubmit} className='flex flex-col sm:flex-row gap-4'>
             <div className='flex flex-col gap-4 flex-1'>
                 <input type="text" placeholder='Name' className='border p-3 rounded-lg' id='name' maxLength='60' minLength='10' required onChange={handleChange} value={formData.name}/>
 
@@ -177,7 +230,7 @@ const CreateListing = () => {
 
 
                     <div className='flex gap-2 items-center'>
-                        <input type="number" id='regularPrice' min='100' max='1000000' required  className='p-3 border border-gray-300 rounded-lg' onChange={handleChange} value={formData.regularPrice}/>
+                        <input type="number" id='regularPrice' min='0' max='1000000' required  className='p-3 border border-gray-300 rounded-lg' onChange={handleChange} value={formData.regularPrice}/>
                         <div className='flex flex-col items-center'>
                               <p className='font-semibold'>Regular Price</p>
                               <p className=' text-xs'>($ / Month)</p>                       
@@ -224,12 +277,13 @@ const CreateListing = () => {
 
 
                 <button
-                    // disabled={loading}
+                     disabled={loading||loadingUploadImage}
                     className='bg-slate-700 text-white rounded-lg p-3 uppercase hover:opacity-95 disabled:opacity-80'
                     >
-                    {/* {loading ? 'Loading...' : 'Update'} */}
-                    Create Listing
+                    {loading ? 'creating...' : 'Create Listing'}
+                    
                 </button>
+                {error && <p className='text-red-500 text-sm self-center'>{error}</p>}
             </div>
         </form>
     </main>
