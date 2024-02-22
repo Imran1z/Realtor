@@ -14,32 +14,40 @@ const CreateListing = () => {
         imageUrls:[],
     });
     const [imageUploadError, setImageUploadError] = useState("");
+    const [loadingUploadImage, setloadingUploadImage] = useState(false)
    // console.log(files)
    console.log(formData);
 
     const handleimageSubmit=()=>{
+        setloadingUploadImage(true)
+        setImageUploadError("");
         if (files.length>0 && files.length + formData.imageUrls.length<7) {
+            
             const promises =[];
-
+            
             for (let i = 0; i < files.length; i++) {
                 promises.push(storeImage(files[i]));
             }
-
+            
             Promise.all(promises).then((urls)=>{
                 setFormData({...formData,imageUrls:formData.imageUrls.concat(urls)});
                 setImageUploadError("");
-
-
+                setloadingUploadImage(false)
+                
+                
             }).catch((err)=>{
                 setImageUploadError("Image upload failed (2 mb max per image)");
+                setloadingUploadImage(false)
             })
-
+            
         }else if(files.length==0){
-              setImageUploadError("You have to upload at least one image")
+            setImageUploadError("You have to upload at least one image")
+            setloadingUploadImage(false)
         }
         
         else {
             setImageUploadError("You can only upload 6 images per listing")
+            setloadingUploadImage(false)
         }
 
 
@@ -160,7 +168,7 @@ const CreateListing = () => {
 
                 <div className='flex gap-4'>
                     <input onChange={(e)=>setFiles(e.target.files )} className='p-3 border border-gray-300 rounded w-full' type="file" id='images' accept='images/*' multiple/>
-                    <button type='button' onClick={handleimageSubmit} className='p-3 text-green-700 border border-green-700 rounded uppercase hover:shadow-md disabled:opacity-80'>Upload</button>
+                    <button type='button' disabled={loadingUploadImage} onClick={handleimageSubmit} className='p-3 text-green-700 border border-green-700 rounded uppercase hover:shadow-md disabled:opacity-80'>{loadingUploadImage?"Uploading...":"Upload"}</button>
                 </div>
                 <p className='text-red-500 text-sm'>{imageUploadError && imageUploadError}</p>
                         {
