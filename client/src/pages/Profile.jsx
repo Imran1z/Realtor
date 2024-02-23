@@ -173,6 +173,31 @@ dispatch(signinFailure(error.message))
     }
   }
 
+  const handleListingDelete =async(id)=>{
+    try {
+      console.log(id)
+      const res =await fetch(`/api/v1/listing/delete/${id}`,{
+        method:'DELETE',
+      });
+      const data = await res.json();
+        console.log("data from api",data);
+         if (data.success === false) {
+          console.log(data.message);
+          return;
+         }
+
+         setUserListings((prev)=>prev.filter((listing)=>listing._id !== id))
+
+      
+    } catch (error) {
+      console.log(error)
+      
+    }
+
+  }
+  const handleListingEdit =async(id)=>{
+
+  }
 
 
   return (
@@ -273,8 +298,8 @@ dispatch(signinFailure(error.message))
           </Link>
 
           <div className='flex flex-col gap-2'>
-            <button className='text-red-700 uppercase'>Delete</button>
-            <button className='text-green-700 uppercase'>Edit</button>
+            <button onClick={()=>handleListingDelete(listing._id)} className='text-red-700 uppercase'>Delete</button>
+            <button onClick={()=>handleListingEdit(listing._id)} className='text-green-700 uppercase'>Edit</button>
           </div>
           </div>
         ))}
