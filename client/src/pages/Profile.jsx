@@ -197,6 +197,7 @@ dispatch(signinFailure(error.message))
   }
   const handleListingEdit =async(id)=>{
 
+
   }
 
 
@@ -299,7 +300,10 @@ dispatch(signinFailure(error.message))
 
           <div className='flex flex-col gap-2'>
             <button onClick={()=>handleListingDelete(listing._id)} className='text-red-700 uppercase'>Delete</button>
-            <button onClick={()=>handleListingEdit(listing._id)} className='text-green-700 uppercase'>Edit</button>
+            <Link to={`/update-listing/${listing._id}`}>
+
+            <button className='text-green-700 uppercase'>Edit</button>
+            </Link>
           </div>
           </div>
         ))}
