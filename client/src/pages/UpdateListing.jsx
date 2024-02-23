@@ -41,21 +41,25 @@ const UpdateListing = () => {
 
     useEffect(()=>{
         const fetchListing =async()=>{
+           try {
             const listingId =prams.listingId;
-           // console.log(listingId);
-
-            const res =await fetch(`/api/v1/listing/get/${listingId}`);
-            const data =await res.json();
-          //  console.log(data)
-            setFormData(data);
-
-            if (data.success===false) {
-  
-            }
+            // console.log(listingId);
+ 
+             const res =await fetch(`/api/v1/listing/get/${listingId}`);
+             const data =await res.json();
+           //  console.log(data)
+             setFormData(data);
+ 
+             if (data.success===false) {
+                 console.log(data.message)
+             }
+           } catch (error) {
+            console.log(error)
+           }
 
         }
         fetchListing();
-    },[])
+    },[prams.listingId])
 
    // console.log(files)
 
