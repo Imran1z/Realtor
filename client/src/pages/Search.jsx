@@ -1,6 +1,10 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
+import {useNavigate} from 'react-router-dom'
+
 
 const Search = () => {
+    const navigate =useNavigate()
+    
     const [sidebarData, setsidebarData] = useState({
         searchTerm:'',
         type:'all',
@@ -10,7 +14,36 @@ const Search = () => {
         sort:'createdAt',
         order:'desc',
     });
-    console.log(sidebarData)
+
+    useEffect(()=>{
+        const urlParams =new URLSearchParams(location.search);
+        const searchTermFormUrl=urlParams.get('searchTerm');
+        const typeFormUrl=urlParams.get('type');
+        const parkingFormUrl=urlParams.get('parking');
+        const furnishedFormUrl=urlParams.get('furnished');
+        const offerFormUrl=urlParams.get('offer');
+        const sortFormUrl=urlParams.get('sort');
+        const orderFormUrl=urlParams.get('order');
+
+        if (searchTermFormUrl||typeFormUrl||parkingFormUrl||furnishedFormUrl||offerFormUrl||sortFormUrl||orderFormUrl) {
+
+            setsidebarData({
+                searchTerm:searchTermFormUrl ||'',
+                type:typeFormUrl ||'all',
+                parking:parkingFormUrl ==='true'?true:false,
+                furnished:furnishedFormUrl ==='true'?true:false,
+                offer:offerFormUrl ==='true'?true:false,
+                sort:sortFormUrl ||'createdAt',
+                order:orderFormUrl ||'desc'
+
+            })
+            
+        }
+
+    },[location.search])
+
+
+    //console.log(sidebarData)
 
     const handleChange =(e)=>{
 
@@ -33,6 +66,16 @@ const Search = () => {
 
     const handleSubmit=(e)=>{
         e.preventDefault();
+        const urlParams =new URLSearchParams();
+        urlParams.set("searchTerm",sidebarData.searchTerm)
+        urlParams.set("type",sidebarData.type)
+        urlParams.set("parking",sidebarData.parking)
+        urlParams.set("furnished",sidebarData.furnished)
+        urlParams.set("offer",sidebarData.offer)
+        urlParams.set("sort",sidebarData.sort)
+        urlParams.set("order",sidebarData.order);
+        const searchQuery =urlParams.toString();
+        navigate(`/search?${searchQuery}`)
 
         
     }

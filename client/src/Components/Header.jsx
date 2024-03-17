@@ -8,7 +8,7 @@ const Header = () => {
    const {currentUser}= useSelector((state)=>state.user);
    const [searchTerm, setsearchTerm] = useState('')
    const navigate = useNavigate()
-   console.log(searchTerm)
+  // console.log(searchTerm)
 
    const handleSubmit =(e)=>{
     e.preventDefault();
