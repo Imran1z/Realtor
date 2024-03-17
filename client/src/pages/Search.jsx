@@ -4,6 +4,9 @@ import {useNavigate} from 'react-router-dom'
 
 const Search = () => {
     const navigate =useNavigate()
+    const [loading, setloading] = useState(false);
+    const [listings, setlistings] = useState([]);
+    console.log(listings)
     
     const [sidebarData, setsidebarData] = useState({
         searchTerm:'',
@@ -39,6 +42,17 @@ const Search = () => {
             })
             
         }
+
+        const fetchListings=async ()=>{
+            setloading(true);
+            const searchQuery=urlParams.toString()
+            const res =await fetch(`/api/v1/listing/get?${searchQuery}`);
+            const data=await res.json()
+            setlistings(data);
+            setloading(false);
+    
+        }
+        fetchListings()
 
     },[location.search])
 
@@ -79,6 +93,8 @@ const Search = () => {
 
         
     }
+
+    
   return (
     <div className='flex flex-col md:flex-row'>
         <div className='p-7 border-b-2 md:border-r-2 md:min-h-screen'>
