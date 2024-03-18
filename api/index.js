@@ -6,6 +6,21 @@ import userRouter from './routes/user.route.js'
 import authRouter from './routes/auth.route.js'
 import listingRouter from './routes/listing.router.js'
 
+
+//changes
+const cors = require('cors');
+
+// Allow requests from a specific origin
+const corsOptions = {
+  origin: 'https://househaven-k1n3.onrender.com/',
+  methods: ['GET', 'POST'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+};
+
+// Use the CORS middleware with custom options
+app.use(cors(corsOptions));
+
+
 import url from 'url';
 import path from 'path'
 

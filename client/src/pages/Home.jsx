@@ -9,6 +9,7 @@ import 'swiper/css/bundle';
 
 const Home = () => {
   const [offerListings, setofferListings] = useState([]);
+  console.log("imran",offerListings)
   const [saleListings, setsaleListings] = useState([])
   const [rentListings, setrentListings] = useState([])
   SwiperCore.use([Navigation])
