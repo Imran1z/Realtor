@@ -7,7 +7,8 @@ const Search = () => {
     const navigate =useNavigate()
     const [loading, setloading] = useState(false);
     const [listings, setlistings] = useState([]);
-    console.log("search",listings)
+    const [showmore, setshowmore] = useState(false)
+    //console.log("search",listings)
     
     const [sidebarData, setsidebarData] = useState({
         searchTerm:'',
@@ -48,7 +49,12 @@ const Search = () => {
             setloading(true);
             const searchQuery=urlParams.toString()
             const res =await fetch(`/api/v1/listing/get?${searchQuery}`);
-            const data=await res.json()
+            const data=await res.json();
+            if (data.length>8) {
+                setshowmore(true)
+            }else{
+                setshowmore(false)
+            }
             setlistings(data);
             setloading(false);
     
@@ -93,6 +99,23 @@ const Search = () => {
         navigate(`/search?${searchQuery}`)
 
         
+    }
+
+    const onShowMoreClick=async()=>{
+       const numberOFListings =listings.length;
+       const urlParams =new URLSearchParams(location.search);
+        const startIndex=numberOFListings;
+        urlParams.set("startIndex",startIndex)
+       
+        const searchQuery=urlParams.toString()
+        const res =await fetch(`/api/v1/listing/get?${searchQuery}`);
+        const data=await res.json();
+        if (data.length<9) {
+            setshowmore(false)
+        }
+        setlistings([...listings,...data]);
+        
+
     }
 
     
@@ -187,6 +210,14 @@ const Search = () => {
                     !loading && listings && listings.map((listing)=>{
                       return  <ListingItem key={listing._id} listing={listing}/>
                     })
+                }
+
+                {
+                    showmore && (
+                        <button className='text-blue-700 text-center w-full hover:text-blue-500'  onClick={
+                            onShowMoreClick
+                        }> Show More...</button>
+                    )
                 }
             </div>
         </div>
