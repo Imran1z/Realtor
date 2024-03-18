@@ -8,8 +8,7 @@ import listingRouter from './routes/listing.router.js'
 
 
 //changes
-const cors = require('cors');
-
+import cors from 'cors'
 // Allow requests from a specific origin
 const corsOptions = {
   origin: 'https://househaven-k1n3.onrender.com/',
