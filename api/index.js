@@ -27,10 +27,15 @@ mongoose.connect(process.env.MONGO_URL).then(()=>{
     console.log(err)
 })
 
-app.use(express.static(path.join(__dirname,'/client/dist')));
-app.get('*',(req,res)=>{
-    res.sendFile(path.join(__dirname,'client','dist','index.html'))
-})
+// app.use(express.static(path.join(__dirname,'/client/dist')));
+// app.get('*',(req,res)=>{
+//     res.sendFile(path.join(__dirname,'client','dist','index.html'))
+// })
+app.use(express.static(path.join(__dirname, '../client/dist')));
+
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, '../client/dist/index.html'));
+});
 
 app.use('/api/v1/user',userRouter)
 app.use('/api/v1/auth',authRouter)
