@@ -11,7 +11,6 @@ const app= express();
 app.use(express.json());
 app.use(cookieParser());
 // Use the CORS middleware with custom options
-app.use(cors(corsOptions));
 
 mongoose.connect(process.env.MONGO_URL).then(()=>{
     console.log('Connected to Mongodb')
