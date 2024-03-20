@@ -24,7 +24,7 @@ const Home = () => {
         setofferListings(data);
         fetchRentListings()
       } catch (error) {
-        console.log(error);
+        console.log("imran1",error);
       }
     }
 
@@ -83,7 +83,7 @@ const Home = () => {
         {offerListings &&
           offerListings.length > 0 &&
           offerListings.map((listing) => (
-            <SwiperSlide>
+            <SwiperSlide key={listing._id}>
               <div
                 style={{
                   background: `url(${listing.imageUrls[0]}) center no-repeat`,
