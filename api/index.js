@@ -6,24 +6,24 @@ import userRouter from './routes/user.route.js'
 import authRouter from './routes/auth.route.js'
 import listingRouter from './routes/listing.router.js'
 import path from 'path'
+import bodyParser from 'body-parser';
 
 dotenv.config();
-const __dirname = path.resolve();
-
 const app= express();
 
+// const __dirname = path.resolve();
+// app.use(express.static(path.join(__dirname, '/client/dist')));
 
-
-app.use(express.static(path.join(__dirname, '/client/dist')));
-
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'client', 'dist', 'index.html'));
-})
+// app.get('*', (req, res) => {
+//   res.sendFile(path.join(__dirname, 'client', 'dist', 'index.html'));
+// })
 
 
 
 app.use(express.json());
+
 app.use(cookieParser());
+app.use(bodyParser.json());
 // Use the CORS middleware with custom options
 
 mongoose.connect(process.env.MONGO_URL).then(()=>{
